@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+<h3>Login</h3>
+    <p>{{ message }}</p>
+    <form method="post" enctype="multipart/form-data">
+        {{ form.as_p }}
+        {% csrf_token %}
+        <button type="submit" >Login</button>
+    </form>
+<br>
+<a href="/register">Register</a>
+{% endblock content %}

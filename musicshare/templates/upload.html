@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<span style="float: left;"><a href="/">Home</a></span>
+<h3>Upload Audio File</h3>
+    <p>{{ message }}</p>
+    <form method="post" onsubmit="event.preventDefault();submituploadform(this);" enctype="multipart/form-data">
+        {{ form.as_p }}
+        {% csrf_token %}
+        <button type="button" onclick="checkregister();" >Add Email</button>
+        <button type="submit" >Upload</button>
+    </form>
+<br>
+<div>
+  <h2>Share With:</h2>
+  <caption>Add Email in Uploaded for Box to share.</caption>
+<div id="emailsuggestions"></div>
+</div>
+<script>
+  function checkregister(){
+    var emails=document.getElementById("emailsuggestions");
+    var rawtext=document.getElementById("id_uploaded_for");
+    if (!ValidateEmail(rawtext)){ return false;  }
+    if (rawtext==''){
+      alert("Please add Email id in Uploaded for Box.");
+      return false;
+    }else if (rawtext==null){
+      alert("Please add Email id in Uploaded for Box.");
+      return false;
+    }else if (emails.innerHTML.includes(rawtext.value)){
+      alert("already added.");
+      return false;
+    }
+    var xhr=new XMLHttpRequest();
+    xhr.onload=function(){ 
+      if(this.responseText=='True'){
+        emails.append(rawtext.value+",");
+      }else {
+        alert("Email not Regsitered.");
+      }
+      console.log(this.responseText);
+    }
+    xhr.onerror=function(){
+      console.log(this.responseText) 
+    }
+    xhr.open("GET","/t?email="+rawtext.value,true)
+    xhr.send()
+  }
+
+
+function ValidateEmail(input) {
+  var validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+  if (input.value.match(validRegex)) {
+    return true;
+  } else {
+    alert("Invalid email address!");
+    return false;
+}
+}
+
+function submituploadform(myform){
+  myform=new FormData(myform);
+  console.log(myform.get("privacy"));
+  if (myform.get("privacy")==2){
+  var emails=document.getElementById("emailsuggestions").innerHTML;
+  if(emails==''){ alert("Add Atleast 1 Email to Share With."); }
+  emails=String(emails).replaceAll(',','","');
+  emails='{"'+emails+'"}';
+  emails=String(emails).replace(',""','');
+  console.log(emails);
+  myform.set('uploaded_for',emails);
+  }else {
+    myform.set('uploaded_for','None');
+  }
+  var xhttp=new XMLHttpRequest();
+  xhttp.onload=function(){ console.log(this.responseText+" if true its success"); if(this.responseText=='success'){alert("Uploaded Successfully.")} };
+  xhttp.onerror=function(){alert("Error Please Check Connection.");};
+  xhttp.open("POST",document.location.href,true);
+  xhttp.send(myform);
+}
+//function toggle_privacy(){
+//  var pr=document.getElementById("id_privacy").value;
+ // console.log(pr);
+ // if (pr!=2){
+ //   console.log(pr+"is called");
+ //   document.getElementById("id_uploaded_for").disabled=true;
+ // }else{
+ //   document.getElementById("id_uploaded_for").disabled=false;
+ // }/
+//}
+
+//document.querySelector("#id_privacy").addEventListener("change",toggle_privacy());
+</script>
+<br><br>
+{% endblock content %}
