@@ -87,9 +87,10 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'postgres',
-        'USER': 'musicshare062023',
-        'PASSWORD': 'Music18062023',
-        'HOST': 'musicsharer.czu2qrxc7cdw.ap-south-1.rds.amazonaws.com',
+        #change these credientials to your custom
+        'USER': 'usernameofdb',
+        'PASSWORD': 'password',
+        'HOST': 'somehost@amazonaws.com',
         'PORT': '5432'
     }
 }
